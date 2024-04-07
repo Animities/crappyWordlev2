@@ -2,12 +2,42 @@
 
 namespace Wordle.Library;
 
-public static class Game
+public class Game
 {
+    public int Attempts { get; set; }
+    public bool IsGameDone { get; set; }
+    public void StartGame()
+    {
+        //starting stuff, goal word picker, directions, etc
+    }
+    public GuessResult Guess(string guess)
+    {
+        //Compute guess, show colors, check if last attempt was made, check if user won, etc
+        //Set isGameDone based on win/loss
+        if (Attempts > 6)
+        {
+            //restart game or something
+            IsGameDone = true;
+        }
+
+        //if (false)//user won the game
+        //{
+        //    IsGameDone = true;
+        //}
+
+        return new GuessResult
+        {
+            First = LetterState.Unused, //Calc these based on guess results
+            Second = LetterState.Unused,
+            Third = LetterState.Unused,
+            Fourth = LetterState.Unused,
+            Fifth = LetterState.Unused,
+        };
+    }
+
     public static void Play()
     {
         var wordsList = new List<string>();
-
         var assembly = Assembly.GetExecutingAssembly();
         var resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("wordList.txt"));
 

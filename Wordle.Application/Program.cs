@@ -9,7 +9,7 @@ class Program
     {
         while (true)
         {
-            Console.WriteLine("Do you want to play manually (1) or AI (2)?");
+            Console.WriteLine("Do you want to play old (0) or clean manually (1) or AI (2)?");
             Console.WriteLine("Enter Number");
             if (!int.TryParse(Console.ReadLine(), out var num))
             {
@@ -18,13 +18,33 @@ class Program
                 continue;
             }
 
-            if (num == 1)
+            if (num == 0)
             {
                 Game.Play();
             }
+            if (num == 1)
+            {
+                var game = new Game();
+                game.StartGame();
+
+                while (!game.IsGameDone)
+                {
+                    var userGuess = Console.ReadLine();
+                    _ = game.Guess(userGuess);
+                }
+            }
             else
             {
-                AiMain.Main();
+                var game = new Game();
+                game.StartGame();
+
+                var ai = new AiMain();
+                GuessResult? previousResult = null;
+                while (!game.IsGameDone)
+                {
+                    var aiGuess = ai.Guess(previousResult);
+                    previousResult = game.Guess(aiGuess);
+                }
             }
         }
     }
