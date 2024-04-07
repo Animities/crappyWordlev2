@@ -6,10 +6,12 @@ public class Game
 {
     public int Attempts { get; set; }
     public bool IsGameDone { get; set; }
+    //TODO implement this
     public void StartGame()
     {
         //starting stuff, goal word picker, directions, etc
     }
+    //TODO implement this
     public GuessResult Guess(string guess)
     {
         //Compute guess, show colors, check if last attempt was made, check if user won, etc
