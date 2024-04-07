@@ -4,7 +4,6 @@ namespace Wordle.Library;
 
 public static class Game
 {
-
     public static void Play()
     {
         var wordsList = new List<string>();
