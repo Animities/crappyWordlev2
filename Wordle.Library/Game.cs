@@ -45,8 +45,6 @@ public class Game
 
     }
 
-
-
     public void StartGame()
     {
         SetChosenWord();

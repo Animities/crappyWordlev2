@@ -9,7 +9,7 @@ class Program
     {
         while (true)
         {
-            Console.WriteLine("Do you want to play old (0) or clean manually (1) or AI (2)?");
+            Console.WriteLine("Do you want to play old (0) or clean manually v2 (1) or NewGame v2 (2) or AI (3)?");
             Console.WriteLine("Enter Number");
             if (!int.TryParse(Console.ReadLine(), out var num))
             {
@@ -25,6 +25,17 @@ class Program
             if (num == 1)
             {
                 var game = new Game();
+                game.StartGame();
+
+                while (!game.IsGameDone)
+                {
+                    var userGuess = Console.ReadLine();
+                    _ = game.Guess(userGuess);
+                }
+            }
+            if (num == 2)
+            {
+                var game = new NewGame();
                 game.StartGame();
 
                 while (!game.IsGameDone)
