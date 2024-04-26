@@ -1,4 +1,12 @@
-﻿using System.Reflection;
+﻿//Questions:
+//
+//-How to get the random word to be used in the other methods?
+//
+//
+//
+
+
+using System.Reflection;
 
 namespace Wordle.Library;
 
@@ -6,9 +14,61 @@ public class Game
 {
     public int Attempts { get; set; }
     public bool IsGameDone { get; set; }
+
+    public string ChosenWord { get; set; }
+
     //TODO implement this
+
+
+
+
+    public void SetChosenWord()//This is shit for repeatable fast speed reruns for the AI (Due to recreation of the list over and over again)
+    {
+        var wordsList = new List<string>();
+
+        if (wordsList.Count == 0)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("wordList.txt"));
+
+            using (var stream = assembly.GetManifestResourceStream(resourceName))
+            using (StreamReader reader = new(stream))
+            {
+                while (reader.ReadLine() != null)
+                {
+                    wordsList.Add(reader.ReadLine());
+                }
+            }
+        }
+        //////////////////////////////////////////////////
+        ChosenWord = wordsList[new Random().Next(wordsList.Count)];
+
+    }
+
+
+
     public void StartGame()
     {
+        SetChosenWord();
+
+        //Console.WriteLine(chosenWord); //Testing Purposes
+        var instructions = new List<string> { "Green means the right letter is in the right place.", "Blue means the letter is in the word, just in the wrong place.", "Finally, red means that the letter isn't in the word at all." };
+        var colourList = new ConsoleColor[] { ConsoleColor.Green, ConsoleColor.Blue, ConsoleColor.Red };
+
+        //Instructions that are very poorly coded for shitty wordle
+        Console.WriteLine("Welcome to shitty wordle");
+
+        for (var wMessage = 0; wMessage < instructions.Count; wMessage++)
+        {
+            Console.ForegroundColor = colourList[wMessage];
+            Console.WriteLine(instructions[wMessage]);
+        }
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.Write("Try to guess the random ");
+        Console.Write(5);
+        Console.WriteLine(" letter word");
+
+
         //starting stuff, goal word picker, directions, etc
     }
     //TODO implement this
@@ -16,9 +76,86 @@ public class Game
     {
         //Compute guess, show colors, check if last attempt was made, check if user won, etc
         //Set isGameDone based on win/loss
-        if (Attempts > 6)
+        var cWord = ChosenWord;
+        bool notNum = false;
+        bool inWord = false;
+        bool correct = false;
+        if (Attempts < 6)
         {
-            //restart game or something
+
+            Console.ForegroundColor = ConsoleColor.White;
+            notNum = false;
+            guess = guess.ToLower(); //Case matching
+            Console.ForegroundColor = ConsoleColor.Red;
+            if (guess.Length == cWord.Length)
+            {
+                notNum = guess.All(c => c >= 'a' && c <= 'z'); //Copy and pasted but know what it does, was just lazy to fugure it out myself https://www.techiedelight.com/check-if-string-contains-only-letters-in-csharp/
+            }
+            else
+            {
+                Console.WriteLine("Please pick a 5 letter word");
+                Console.ForegroundColor = ConsoleColor.White;
+                return new GuessResult();
+            }
+            Attempts += 1;
+            //Time to compare the guess vs word
+            if (cWord == guess)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write(guess);
+                Console.ForegroundColor = ConsoleColor.White;
+                correct = true;
+            }
+            else //Fuck this next bit
+            {
+                //Check to see if a letter is in the right place
+                for (var pos = 0; pos < guess.Length; pos++)
+                {
+                    if (guess[pos] == cWord[pos])
+                    {
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write(guess[pos]);
+
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    }
+                    else if (guess[pos] != cWord[pos]) //Fuck this thing
+                    {
+                        for (var Wpos2 = 0; Wpos2 < guess.Length; Wpos2++)
+                        {
+                            inWord = false;
+                            if (guess[pos] == cWord[Wpos2])
+                            {
+                                Console.ForegroundColor = ConsoleColor.Blue;
+                                Console.Write(guess[pos]);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                inWord = true;
+                                break;
+                            }
+                        }
+                        if (inWord == false) //Stupid solution :)
+                        {
+                            Console.Write(guess[pos]);
+                        }
+                    }
+                }
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+        Console.ForegroundColor = ConsoleColor.White;
+
+        if (correct == false && Attempts == 6)
+        {
+            Console.Write("Out of tries! The correct answer is ");
+            Console.WriteLine(cWord);
+            Console.WriteLine();
+            IsGameDone = true;
+        }
+
+
+        else if (correct == true)
+        {
             IsGameDone = true;
         }
 
