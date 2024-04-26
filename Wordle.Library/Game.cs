@@ -80,6 +80,8 @@ public class Game
         bool notNum = false;
         bool inWord = false;
         bool correct = false;
+        var result = new GuessResult();
+
         if (Attempts < 6)
         {
 
@@ -95,7 +97,7 @@ public class Game
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Please pick a 5 letter word");
                 Console.ForegroundColor = ConsoleColor.White;
-                return new GuessResult();
+                return result;
             }
             Attempts += 1;
             //Time to compare the guess vs word
@@ -113,9 +115,9 @@ public class Game
                 {
                     if (guess[pos] == cWord[pos])
                     {
-
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.Write(guess[pos]);
+                        SetCorrectResult(result, pos);
+                        //Console.ForegroundColor = ConsoleColor.Green;
+                        //Console.Write(guess[pos]);
                     }
                     else if (guess[pos] != cWord[pos]) //Fuck this thing
                     {
@@ -124,16 +126,18 @@ public class Game
                             inWord = false;
                             if (guess[pos] == cWord[Wpos2])
                             {
-                                Console.ForegroundColor = ConsoleColor.Blue;
-                                Console.Write(guess[pos]);
+                                //TODO: Create a method similar to SetCorrectResult for setting this 
+                                //Console.ForegroundColor = ConsoleColor.Blue;
+                                //Console.Write(guess[pos]);
                                 inWord = true;
                                 break;
                             }
                         }
                         if (inWord == false) //Stupid solution :)
                         {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.Write(guess[pos]);
+                            //TODO: Create a method similar to SetCorrectResult for setting this 
+                            //Console.ForegroundColor = ConsoleColor.Red;
+                            //Console.Write(guess[pos]);
                         }
                     }
                 }
@@ -141,7 +145,6 @@ public class Game
             Console.WriteLine();
             Console.WriteLine();
         }
-        Console.ForegroundColor = ConsoleColor.White;
 
         if (correct == false && Attempts == 6)
         {
@@ -150,7 +153,6 @@ public class Game
             Console.WriteLine();
             IsGameDone = true;
         }
-
 
         else if (correct == true)
         {
@@ -162,14 +164,75 @@ public class Game
         //    IsGameDone = true;
         //}
 
-        return new GuessResult
+        WriteResultToConsole(result, guess);
+        Console.ForegroundColor = ConsoleColor.White;
+        return result;
+    }
+
+    private void WriteResultToConsole(GuessResult result, string guess)
+    {
+        for (var pos = 0; pos < guess.Length; pos++)
         {
-            First = LetterState.Unused, //Calc these based on guess results
-            Second = LetterState.Unused,
-            Third = LetterState.Unused,
-            Fourth = LetterState.Unused,
-            Fifth = LetterState.Unused,
-        };
+            if (pos == 0)
+            {
+                SetForeground(result.First);
+            }
+            else if (pos == 1)
+            {
+                SetForeground(result.Second);
+            }
+            else if (pos == 2)
+            {
+                SetForeground(result.Third);
+            }
+            else if (pos == 3)
+            {
+                SetForeground(result.Fourth);
+            }
+            else if (pos == 4)
+            {
+                SetForeground(result.Fifth);
+            }
+            Console.Write(guess[pos]);
+        }
+    }
+
+    private static void SetForeground(LetterState result)
+    {
+        switch (result)
+        {
+            case LetterState.Correct:
+                Console.ForegroundColor = ConsoleColor.Green;
+                break;
+            case LetterState.UsedWrongPlace:
+                Console.ForegroundColor = ConsoleColor.Blue;
+                break;
+            default:
+                Console.ForegroundColor = ConsoleColor.Red;
+                break;
+        }
+    }
+
+    private static void SetCorrectResult(GuessResult result, int pos)
+    {
+        switch (pos)
+        {
+            case 0:
+                result.First = LetterState.Correct;
+                break;
+            case 1:
+                result.Second = LetterState.Correct;
+                break;
+            case 2:
+                result.Third = LetterState.Correct;
+                break;
+            case 3:
+                result.Fourth = LetterState.Correct;
+                break;
+            case 4:
+                result.Fifth = LetterState.Correct;
+                break;
+        }
     }
 
     public static void Play()
