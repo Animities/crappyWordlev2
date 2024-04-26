@@ -86,13 +86,13 @@ public class Game
             Console.ForegroundColor = ConsoleColor.White;
             notNum = false;
             guess = guess.ToLower(); //Case matching
-            Console.ForegroundColor = ConsoleColor.Red;
             if (guess.Length == cWord.Length)
             {
                 notNum = guess.All(c => c >= 'a' && c <= 'z'); //Copy and pasted but know what it does, was just lazy to fugure it out myself https://www.techiedelight.com/check-if-string-contains-only-letters-in-csharp/
             }
             else
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Please pick a 5 letter word");
                 Console.ForegroundColor = ConsoleColor.White;
                 return new GuessResult();
@@ -116,8 +116,6 @@ public class Game
 
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.Write(guess[pos]);
-
-                        Console.ForegroundColor = ConsoleColor.Red;
                     }
                     else if (guess[pos] != cWord[pos]) //Fuck this thing
                     {
@@ -128,13 +126,13 @@ public class Game
                             {
                                 Console.ForegroundColor = ConsoleColor.Blue;
                                 Console.Write(guess[pos]);
-                                Console.ForegroundColor = ConsoleColor.Red;
                                 inWord = true;
                                 break;
                             }
                         }
                         if (inWord == false) //Stupid solution :)
                         {
+                            Console.ForegroundColor = ConsoleColor.Red;
                             Console.Write(guess[pos]);
                         }
                     }
